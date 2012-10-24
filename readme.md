@@ -5,7 +5,7 @@ This is a python script to generate hue histograms
 and color pies from color png images.
 Some sample output of this script is explained here:
 
-http://blog.zillabyte.com/post/11193458776/color-as-data
+http://tylerneylon.com/a/imghist/
 
 
 installation
