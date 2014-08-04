@@ -215,7 +215,7 @@ def setupParameters(options, args):
   gaussParam = max(float(numBuckets) * 0.2, 150)  # Lower = smoother histogram.
   if outputMode == 'both': gaussParam /= 2
   lineLenExp = 0.5 if outputMode == 'hist' else 0.4  # In [0,1].  Lower = more even histogram.
-  
+
   lineWidth = float(width - 2 * margin) / numBuckets * 1. # 0.4
 
   inputFilename = args[1]
@@ -228,7 +228,7 @@ def readImage():
   global pixPts
   print "Reading in image data."
   reader = png.Reader(inputFilename)
-  imgData = reader.read()
+  imgData = reader.asRGBA8()
   pixels = imgData[2]
   pixPts = []
   rowCount = 0
@@ -236,7 +236,7 @@ def readImage():
     rowCount += 1
     row = map(lambda x: x / 255.0, row)
     numElts = len(row)
-    for i in xrange(0, numElts, 3):
+    for i in xrange(0, numElts, 4):
       pixPts.append(row[i:i+3])
       if outputMode != 'pie':
         (h, l, s) = colorsys.rgb_to_hls(*tuple(row[i:i+3]))
