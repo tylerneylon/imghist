@@ -35,6 +35,7 @@ height = 600
 lineWidth = 1.0
 histInnerRadius = 125
 margin = 10
+numSlices = 5
 
 gaussParam = 0
 lineLenExp = 0
@@ -80,7 +81,7 @@ def kmeans(pts, k):
   centers = random.sample(pts, k)
   maxIters = 3  # 8 TEMP
   while iters < maxIters:
-    print "Starting iter %d" % iters
+    print "Starting iteration %d" % iters
     newCenters, nums = findCentroids(pts, centers)
     if centers == newCenters:
       return centers
@@ -184,6 +185,9 @@ def makeParser():
   parser.add_option("-m", "--mode", action="store", type="string",
                     dest="mode", default="hist",
                     help="one of {hist,pie,both} (default is hist)")
+  parser.add_option("-n", "--numSlices", action="store", type="int",
+                    dest="numSlices", default=5,
+                    help="number of pie slices (default is 5)")
   parser.add_option("-b", "--drawBkg", action="store_true",
                     dest="drawBkg", default=False,
                     help="draw a white background")
@@ -200,6 +204,7 @@ def setupParameters(options, args):
   global inputFilename
   global outputFilename
   global histInnerRadius
+  global numSlices
 
   if len(args) != 3:
     parser.print_help()
@@ -223,6 +228,8 @@ def setupParameters(options, args):
 
   radiusFactor = 0.2 if outputMode == 'both' else 0.45
   histInnerRadius = min(width, height) * radiusFactor
+
+  numSlices = options.numSlices
 
 def readImage():
   global pixPts
@@ -299,8 +306,7 @@ def drawHist(ctx):
       bottom = height - margin
       drawLine(ctx, x, bottom, x, bottom - lineLen * barHeight)
 
-def drawPie(ctx):
-  k = 5
+def drawPie(ctx, k=5):
   (centers, nums) = kmeans(pixPts, k)
   total = sum(nums)
   s = 0.0
@@ -326,6 +332,6 @@ if __name__ == '__main__':
   smoothHist()
   ctx, surface = makeCairoContext(options.drawBkg)
   if outputMode != 'pie': drawHist(ctx)
-  if outputMode != 'hist': drawPie(ctx)
+  if outputMode != 'hist': drawPie(ctx, numSlices)
 
   surface.write_to_png(outputFilename)
